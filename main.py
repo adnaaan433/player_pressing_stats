@@ -110,7 +110,7 @@ if cdf is not None:
         <div style='text-align: center; color: #888888; padding: 10px;'>
             <p>
                 Made by <a href="https://twitter.com/adnaaan433" target="_blank" style="text-decoration: none; color: #00d9ff;">@adnaaan433</a>
-                | Special thanks to <a href="https://twitter.com/mckayjohns" target="_blank" style="text-decoration: none; color: #ff6b35;">@mckayjohns</a>
+                | Special thanks to <a href="https://twitter.com/mckayjohns" target="_blank" style="text-decoration: none; color: #ff6b35;">@mckayjohns</a> for his amazing tutorial
             </p>
             <p style="font-size: 0.9em; margin-top: 5px;">
                 Special Thanks to <a href="https://twitter.com/MichaelGMackin" target="_blank" style="text-decoration: none; color: #ffd700;">@MichaelGMackin</a> for providing the premium subscription of Statsbomb data
