@@ -28,25 +28,6 @@ def get_competitions(username=None,
     url = "https://data.statsbombservices.com/api/v4/competitions"
     
     username, password = get_credentials(username, password)
-    
-    if username and password:
-        response = requests.get(url, auth=(username, password))
-    else:
-        response = requests.get(url)
-    
-    if response.status_code != 200:
-        print(f"Error {response.status_code}: {response.text}")
-        return None
-    
-    cdf = pd.DataFrame(response.json())
-    cdf = cdf[cdf['competition_name'].isin(['1. Bundesliga', 'La Liga', 'Premier League', 'Serie A', 'Ligue 1'])]
-    cdf = cdf[['competition_id', 'season_id', 'country_name', 'competition_name', 'season_name']].reset_index(drop=True)
-    
-    return cdf
-
-def get_matches_id(competition_id, season_id,
-                   username=None, 
-                   password=None):
     url = f"https://data.statsbombservices.com/api/v6/competitions/{competition_id}/seasons/{season_id}/matches"
 
     username, password = get_credentials(username, password)
