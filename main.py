@@ -94,7 +94,7 @@ if cdf is not None:
         1. Select a competition from the dropdown
         2. Select a season
         3. Select a team from the available teams
-        4. Click the "Analyze" button
+        4. Click the "🔍 Analyze" button
         """)
 
 else:
