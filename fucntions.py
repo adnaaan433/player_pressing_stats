@@ -140,7 +140,8 @@ def get_short_name(full_name):
 
 def get_players_df(competition_name, season_name, team_name, 
                    username=None, 
-                   password=None):
+                   password=None,
+                   per_90=False):
     competition_id, season_id = find_competition_season(
         competition_name, season_name, username, password
     )
@@ -169,8 +170,13 @@ def get_players_df(competition_name, season_name, team_name,
     pdf = team_matches
     pdf['player_known_name'] = pdf['player_known_name'].fillna(pdf['player_name'])
     
-    pdf['pressures'] = pdf['pressures_90'] * pdf['90s_played']
-    pdf['counterpressures'] = pdf['counterpressures_90'] * pdf['90s_played']
+    if per_90:
+        pdf['pressures'] = pdf['pressures_90']
+        pdf['counterpressures'] = pdf['counterpressures_90']
+    else:
+        pdf['pressures'] = pdf['pressures_90'] * pdf['90s_played']
+        pdf['counterpressures'] = pdf['counterpressures_90'] * pdf['90s_played']
+        
     pdf['total'] = pdf['pressures'] + pdf['counterpressures']
     pdf['team_percentage'] = pdf['total'] / pdf['total'].sum() * 100
     pdf['short_name'] = pdf['player_known_name'].apply(get_short_name)
@@ -180,8 +186,9 @@ def get_players_df(competition_name, season_name, team_name,
 
 def plot_top10_pressers(competition_name, season_name, team_name,
                         username=None, 
-                        password=None):
-    pdf = get_players_df(competition_name, season_name, team_name, username, password)
+                        password=None,
+                        per_90=False):
+    pdf = get_players_df(competition_name, season_name, team_name, username, password, per_90=per_90)
     
     if pdf is None:
         return
@@ -208,13 +215,17 @@ def plot_top10_pressers(competition_name, season_name, team_name,
     for i, (idx, row) in enumerate(top10.iterrows()):
         pressure_x = row['pressures'] / 2
         if row['pressures'] > 0:
-            ax.text(pressure_x, i, f"{int(row['pressures'])}", 
+            # Format label: integer for total, 1 decimal for per 90
+            label = f"{row['pressures']:.1f}" if per_90 else f"{int(row['pressures'])}"
+            ax.text(pressure_x, i, label, 
                     ha='center', va='center', fontsize=10, fontweight='bold', 
                     color='white')
         
         counter_x = row['pressures'] + (row['counterpressures'] / 2)
         if row['counterpressures'] > 0:
-            ax.text(counter_x, i, f"{int(row['counterpressures'])}", 
+            # Format label: integer for total, 1 decimal for per 90
+            label = f"{row['counterpressures']:.1f}" if per_90 else f"{int(row['counterpressures'])}"
+            ax.text(counter_x, i, label, 
                     ha='center', va='center', fontsize=10, fontweight='bold', 
                     color='white')
 
@@ -222,19 +233,25 @@ def plot_top10_pressers(competition_name, season_name, team_name,
     for i, (idx, row) in enumerate(top10.iterrows()):
         bar_end = row['total']
         percentage = row['team_percentage']
-        total = int(row['total'])
+        
+        # Format total: integer for total, 1 decimal for per 90
+        total_val = f"{row['total']:.1f}" if per_90 else f"{int(row['total'])}"
         
         # Add total and percentage text at the end of bar
-        ax.text(bar_end + 5, i, f"{total} ({percentage:.1f}%)", 
+        ax.text(bar_end + (0.5 if per_90 else 5), i, f"{total_val} ({percentage:.1f}%)", 
                 ha='left', va='center', fontsize=11, 
                 fontweight='bold', color='#ffd700')
 
     # Customize axes
     ax.set_yticks(y_pos)
     ax.set_yticklabels(top10['short_name'], fontsize=11, fontweight='bold')
-    ax.set_xlabel('Total Pressures', fontsize=12, 
+    
+    xlabel_text = 'Pressures per 90' if per_90 else 'Total Pressures'
+    ax.set_xlabel(xlabel_text, fontsize=12, 
                 fontweight='bold', color='white')
-    ax.set_title(f"{team_name} Top 10 Pressers", 
+    
+    title_suffix = " (Per 90)" if per_90 else ""
+    ax.set_title(f"{team_name} Top 10 Pressers{title_suffix}", 
                 fontsize=25, fontweight='bold', pad=50, color='white')
     ax.text(0.5, 1.05, f'{competition_name} - {season_name} | Data: Statsbomb | made by: @adnaaan433', 
             fontsize=12, color='white', ha='center', transform=ax.transAxes)
@@ -243,7 +260,7 @@ def plot_top10_pressers(competition_name, season_name, team_name,
     ax.grid(axis='x', alpha=0.2, linestyle='--', linewidth=0.5)
     ax.set_axisbelow(True)
     ax.invert_yaxis()
-    ax.set_xlim(0, top10['total'].max() + 50)
+    ax.set_xlim(0, top10['total'].max() + (5 if per_90 else 50))
 
     # Remove spines
     ax.spines['top'].set_visible(False)

@@ -66,10 +66,12 @@ if cdf is not None:
     
     st.markdown("---")
     
+    per_90 = st.toggle("Show Per 90 Stats", value=False)
+    
     if team_name and st.button("🔍 Analyze Top 10 Pressers", type="primary", use_container_width=True):
         with st.spinner("Fetching data and generating visualization..."):
             try:
-                fig, pdf = plot_top10_pressers(selected_competition, selected_season, team_name)
+                fig, pdf = plot_top10_pressers(selected_competition, selected_season, team_name, per_90=per_90)
                 st.pyplot(fig)
                 
                 st.success("✅ Visualization generated successfully!")
@@ -94,7 +96,8 @@ if cdf is not None:
         1. Select a competition from the dropdown
         2. Select a season
         3. Select a team from the available teams
-        4. Click the "🔍 Analyze" button
+        4. Toggle "Show Per 90 Stats" if desired
+        5. Click the "🔍 Analyze" button
         """)
 
 else:
