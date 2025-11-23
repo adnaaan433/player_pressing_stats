@@ -68,15 +68,18 @@ if cdf is not None:
     
     per_90 = st.toggle("Show Per 90 Stats", value=False)
     
+    min_minutes = 0
+    if per_90:
+        min_minutes = st.slider("Minimum Minutes Played", min_value=500, max_value=1500, value=900, step=100)
+    
     if team_name and st.button("🔍 Analyze Top 10 Pressers", type="primary", use_container_width=True):
         with st.spinner("Fetching data and generating visualization..."):
             try:
-                fig, pdf = plot_top10_pressers(selected_competition, selected_season, team_name, per_90=per_90)
-                st.pyplot(fig)
+                fig, pdf = plot_top10_pressers(selected_competition, selected_season, team_name, per_90=per_90, min_minutes=min_minutes)
                 
-                st.success("✅ Visualization generated successfully!")
-
-                # st.dataframe(pdf)
+                if fig:
+                    st.pyplot(fig)
+                    st.success("✅ Visualization generated successfully!")
                 
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
@@ -90,13 +93,14 @@ if cdf is not None:
         - Select any available competition and season
         - Choose from teams that played in that competition/season
         - View top 10 players by total pressures (pressures + counter-pressures)
+        - Toggle "Per 90" stats and filter by minimum minutes played
         - Interactive visualization with dark modern design
         
         **How to use:**
         1. Select a competition from the dropdown
         2. Select a season
         3. Select a team from the available teams
-        4. Toggle "Show Per 90 Stats" if desired
+        4. Toggle "Show Per 90 Stats" if desired (and adjust minimum minutes)
         5. Click the "🔍 Analyze" button
         """)
 

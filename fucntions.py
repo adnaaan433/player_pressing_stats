@@ -141,7 +141,8 @@ def get_short_name(full_name):
 def get_players_df(competition_name, season_name, team_name, 
                    username=None, 
                    password=None,
-                   per_90=False):
+                   per_90=False,
+                   min_minutes=0):
     competition_id, season_id = find_competition_season(
         competition_name, season_name, username, password
     )
@@ -168,6 +169,11 @@ def get_players_df(competition_name, season_name, team_name,
         return None
     
     pdf = team_matches
+    
+    # Filter by minimum minutes if specified
+    if min_minutes > 0:
+        pdf = pdf[pdf['minutes'] >= min_minutes].copy()
+        
     pdf['player_known_name'] = pdf['player_known_name'].fillna(pdf['player_name'])
     
     if per_90:
@@ -187,11 +193,13 @@ def get_players_df(competition_name, season_name, team_name,
 def plot_top10_pressers(competition_name, season_name, team_name,
                         username=None, 
                         password=None,
-                        per_90=False):
-    pdf = get_players_df(competition_name, season_name, team_name, username, password, per_90=per_90)
+                        per_90=False,
+                        min_minutes=0):
+    pdf = get_players_df(competition_name, season_name, team_name, username, password, per_90=per_90, min_minutes=min_minutes)
     
-    if pdf is None:
-        return
+    if pdf is None or pdf.empty:
+        st.warning(f"No players found with minimum {min_minutes} minutes played.")
+        return None, None
     
     top10 = pdf.head(10).copy()
 
