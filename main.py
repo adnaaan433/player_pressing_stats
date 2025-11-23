@@ -103,6 +103,22 @@ if cdf is not None:
         4. Toggle "Show Per 90 Stats" if desired (and adjust minimum minutes)
         5. Click the "🔍 Analyze" button
         """)
+    
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style='text-align: center; color: #888888; padding: 10px;'>
+            <p>
+                Made by <a href="https://twitter.com/adnaaan433" target="_blank" style="text-decoration: none; color: #00d9ff;">@adnaaan433</a>
+                | Special thanks to <a href="https://twitter.com/mckayjohns" target="_blank" style="text-decoration: none; color: #ff6b35;">@mckayjohns</a>
+            </p>
+            <p style="font-size: 0.9em; margin-top: 5px;">
+                Special Thanks to <a href="https://twitter.com/MichaelGMackin" target="_blank" style="text-decoration: none; color: #ffd700;">@MichaelGMackin</a> for providing the premium subscription of Statsbomb data
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 else:
     st.error("Failed to load competitions data. Please check your API credentials.")
