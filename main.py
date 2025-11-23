@@ -7,6 +7,23 @@ st.set_page_config(page_title="Football Pressure Analysis", layout="wide")
 st.title("⚽ Football Player Pressure Analysis")
 st.markdown("---")
 
+# Check for secrets
+if "statsbomb" not in st.secrets:
+    st.error("⚠️ API Credentials not found!")
+    st.info("""
+    **To fix this on Streamlit Cloud:**
+    1. Go to your app dashboard.
+    2. Click on 'Manage app' (bottom right) or 'Settings' (top right menu).
+    3. Go to the **Secrets** section.
+    4. Paste your credentials in TOML format:
+    ```toml
+    [statsbomb]
+    username = "your_email@example.com"
+    password = "your_password"
+    ```
+    """)
+    st.stop()
+
 @st.cache_data
 def load_competitions():
     return get_competitions()
