@@ -87,7 +87,7 @@ if cdf is not None:
     
     min_minutes = 0
     if per_90:
-        min_minutes = st.slider("Minimum Minutes Played", min_value=500, max_value=1500, value=900, step=100)
+        min_minutes = st.slider("Minimum Minutes Played", min_value=500, max_value=1500, value=500, step=100)
     
     if team_name and st.button("🔍 Analyze Top 10 Pressers", type="primary", use_container_width=True):
         with st.spinner("Fetching data and generating visualization..."):
