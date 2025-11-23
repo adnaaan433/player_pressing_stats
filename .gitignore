@@ -2,4 +2,4 @@
 .streamlit/secrets.toml
 __pycache__/
 *.pyc
-ra_code.ipynb
+raw_code.ipynb
