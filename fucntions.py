@@ -279,7 +279,14 @@ def plot_top10_pressers(competition_name, season_name, team_name,
     title_suffix = " (Per 90)" if per_90 else ""
     ax.set_title(f"{team_name} Top 10 Pressers{title_suffix}", 
                 fontsize=25, fontweight='bold', pad=50, color='white')
-    ax.text(0.5, 1.05, f'{competition_name} - {season_name} | Data: Statsbomb | made by: @adnaaan433', 
+    
+    # Add subtitle with minimum minutes info if filter is applied
+    subtitle = f'{competition_name} - {season_name}'
+    if min_minutes > 0:
+        subtitle += f', players with {min_minutes}+ mins'
+    subtitle += ' | Data: Statsbomb | made by: @adnaaan433'
+    
+    ax.text(0.5, 1.05, subtitle, 
             fontsize=12, color='white', ha='center', transform=ax.transAxes)
 
     # Grid
