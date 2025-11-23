@@ -3,10 +3,31 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
+import streamlit as st
+import os
 
-def get_competitions(username='Jack71299@hotmail.co.uk', 
-                     password='J7rB7aP2'):
+def get_credentials(username=None, password=None):
+    """
+    Retrieve credentials from arguments, Streamlit secrets, or environment variables.
+    """
+    if username and password:
+        return username, password
+    
+    # Try Streamlit secrets
+    try:
+        if "statsbomb" in st.secrets:
+            return st.secrets["statsbomb"]["username"], st.secrets["statsbomb"]["password"]
+    except Exception:
+        pass
+        
+    # Fallback to environment variables
+    return os.environ.get("STATSBOMB_USERNAME"), os.environ.get("STATSBOMB_PASSWORD")
+
+def get_competitions(username=None, 
+                     password=None):
     url = "https://data.statsbombservices.com/api/v4/competitions"
+    
+    username, password = get_credentials(username, password)
     
     if username and password:
         response = requests.get(url, auth=(username, password))
@@ -24,9 +45,11 @@ def get_competitions(username='Jack71299@hotmail.co.uk',
     return cdf
 
 def get_matches_id(competition_id, season_id,
-                   username='Jack71299@hotmail.co.uk', 
-                   password='J7rB7aP2'):
+                   username=None, 
+                   password=None):
     url = f"https://data.statsbombservices.com/api/v6/competitions/{competition_id}/seasons/{season_id}/matches"
+
+    username, password = get_credentials(username, password)
 
     if username and password:
         response = requests.get(url, auth=(username, password))
@@ -53,8 +76,8 @@ def get_matches_id(competition_id, season_id,
     
     return mdf
 
-def find_competition_season(competition_name, season_name, username='Jack71299@hotmail.co.uk', 
-                           password='J7rB7aP2'):
+def find_competition_season(competition_name, season_name, username=None, 
+                           password=None):
     cdf = get_competitions(username, password)
     
     if cdf is None:
@@ -85,9 +108,11 @@ def find_competition_season(competition_name, season_name, username='Jack71299@h
     return competition_id, season_id
 
 def get_player_stats(season_id, competition_id, 
-                     username='Jack71299@hotmail.co.uk', 
-                     password='J7rB7aP2'):
+                     username=None, 
+                     password=None):
     url = f"https://data.statsbombservices.com/api/v4/competitions/{competition_id}/seasons/{season_id}/player-stats"
+    
+    username, password = get_credentials(username, password)
     
     if username and password:
         response = requests.get(url, auth=(username, password))
@@ -114,8 +139,8 @@ def get_short_name(full_name):
         return parts[0][0] + ". " + parts[1][0] + ". " + " ".join(parts[2:])
 
 def get_players_df(competition_name, season_name, team_name, 
-                   username='Jack71299@hotmail.co.uk', 
-                   password='J7rB7aP2'):
+                   username=None, 
+                   password=None):
     competition_id, season_id = find_competition_season(
         competition_name, season_name, username, password
     )
@@ -154,8 +179,8 @@ def get_players_df(competition_name, season_name, team_name,
     return pdf
 
 def plot_top10_pressers(competition_name, season_name, team_name,
-                       username='Jack71299@hotmail.co.uk', 
-                       password='J7rB7aP2'):
+                        username=None, 
+                        password=None):
     pdf = get_players_df(competition_name, season_name, team_name, username, password)
     
     if pdf is None:
